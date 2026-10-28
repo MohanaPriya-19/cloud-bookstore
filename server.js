@@ -151,6 +151,19 @@ app.get('/api/orders', async (req, res) => {
   }
 });
 
+// 1b. READ: Get single order by ID
+app.get('/api/orders/:id', async (req, res) => {
+  try {
+    const order = await db.getOrderById(req.params.id);
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Order not found' });
+    }
+    res.json({ success: true, data: order });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 // 2. CREATE: Place a new customer order
 app.post('/api/orders', async (req, res) => {
   try {
