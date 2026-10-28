@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Bookstore - PaaS Cloud Lab</title>
+  <meta name="description" content="Dynamic Bookstore Web Application with CRUD operations for Books and Orders, ready for PaaS deployment via GitHub integration.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="header">
+    <div class="container header-container">
+      <div class="logo-group">
+        <span class="logo-icon">📚</span>
+        <div>
+          <h1 class="logo-title">Cloud Bookstore</h1>
+          <p class="logo-subtitle">Developed by <strong>MohanaPriya-29</strong> | PaaS Dynamic Web App</p>
+        </div>
+      </div>
+      <div class="header-nav">
+        <button id="tab-books-btn" class="nav-btn active" onclick="switchTab('books')">📖 Books Catalog</button>
+        <button id="tab-orders-btn" class="nav-btn" onclick="switchTab('orders')">📦 Customer Orders</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="container main-content">
+
+    <!-- Overview Stats Bar -->
+    <section class="stats-grid" id="stats-section">
+      <div class="stat-card">
+        <span class="stat-icon">📚</span>
+        <div>
+          <h3 id="stat-books">0</h3>
+          <p>Total Books</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">📦</span>
+        <div>
+          <h3 id="stat-orders">0</h3>
+          <p>Customer Orders</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">💵</span>
+        <div>
+          <h3 id="stat-revenue">$0.00</h3>
+          <p>Total Revenue</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">⚠️</span>
+        <div>
+          <h3 id="stat-low-stock">0</h3>
+          <p>Low Stock Items</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Notification Toast Message -->
+    <div id="toast" class="toast"></div>
+
+    <!-- ========================================== -->
+    <!-- TAB 1: BOOKS SECTION (CRUD)                -->
+    <!-- ========================================== -->
+    <section id="books-section" class="tab-content active">
+      
+      <!-- Top Action Bar -->
+      <div class="section-header">
+        <div>
+          <h2>Book Inventory & Details</h2>
+          <p>Display, add, edit, and delete books in your store catalog.</p>
+        </div>
+        <button class="btn btn-primary" onclick="toggleAddBookForm()">+ Add New Book</button>
+      </div>
+
+      <!-- Add New Book Form (Collapsible) -->
+      <div id="add-book-card" class="form-card" style="display: none;">
+        <div class="form-header">
+          <h3>Add a New Book</h3>
+          <button type="button" class="close-btn" onclick="toggleAddBookForm()">&times;</button>
+        </div>
+        <form id="add-book-form" onsubmit="handleCreateBook(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="book-title">Book Title *</label>
+              <input type="text" id="book-title" required placeholder="e.g. Distributed Cloud Systems">
+            </div>
+            <div class="form-group">
+              <label for="book-author">Author(s) *</label>
+              <input type="text" id="book-author" required placeholder="e.g. Andrew S. Tanenbaum">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="book-category">Category</label>
+              <select id="book-category">
+                <option value="Cloud Computing">Cloud Computing</option>
+                <option value="Software Engineering">Software Engineering</option>
+                <option value="Web Development">Web Development</option>
+                <option value="Artificial Intelligence">Artificial Intelligence</option>
+                <option value="Data Science">Data Science</option>
+                <option value="General">General</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="book-price">Price ($) *</label>
+              <input type="number" id="book-price" step="0.01" min="0" required placeholder="39.99">
+            </div>
+            <div class="form-group">
+              <label for="book-stock">Stock Quantity *</label>
+              <input type="number" id="book-stock" min="0" required placeholder="10">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="book-desc">Description / Synopsis</label>
+            <textarea id="book-desc" rows="3" placeholder="Brief summary of the book content..."></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Save & Add Book</button>
+            <button type="button" class="btn btn-secondary" onclick="toggleAddBookForm()">Cancel</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Search & Filter Bar -->
+      <div class="filter-bar">
+        <input type="text" id="book-search" placeholder="🔍 Search by title, author, or keyword..." oninput="handleSearchBooks()">
+        <select id="book-filter-category" onchange="loadBooks()">
+          <option value="All">All Categories</option>
+          <option value="Cloud Computing">Cloud Computing</option>
+          <option value="Software Engineering">Software Engineering</option>
+          <option value="Web Development">Web Development</option>
+          <option value="Artificial Intelligence">Artificial Intelligence</option>
+          <option value="Data Science">Data Science</option>
+        </select>
+        <select id="book-sort" onchange="loadBooks()">
+          <option value="">Default Order</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+          <option value="title-asc">Title: A to Z</option>
+          <option value="stock-asc">Stock: Low to High</option>
+        </select>
+      </div>
+
+      <!-- Books Table / Grid -->
+      <div class="table-container">
+        <table class="data-table" id="books-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Title & Details</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="books-list-body">
+            <!-- Dynamically populated by app.js -->
+            <tr><td colspan="6" class="text-center">Loading books...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 2: ORDERS SECTION (MANAGEMENT)         -->
+    <!-- ========================================== -->
+    <section id="orders-section" class="tab-content">
+      
+      <!-- Top Action Bar -->
+      <div class="section-header">
+        <div>
+          <h2>Customer Orders Management</h2>
+          <p>Track, fulfill, update status, and place new orders for customers.</p>
+        </div>
+        <button class="btn btn-success" onclick="togglePlaceOrderForm()">+ Place New Order</button>
+      </div>
+
+      <!-- Place New Order Form (Collapsible) -->
+      <div id="place-order-card" class="form-card" style="display: none;">
+        <div class="form-header">
+          <h3>Create Customer Order</h3>
+          <button type="button" class="close-btn" onclick="togglePlaceOrderForm()">&times;</button>
+        </div>
+        <form id="place-order-form" onsubmit="handleCreateOrder(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="order-customer-name">Customer Name *</label>
+              <input type="text" id="order-customer-name" required placeholder="e.g. John Doe">
+            </div>
+            <div class="form-group">
+              <label for="order-customer-email">Customer Email *</label>
+              <input type="email" id="order-customer-email" required placeholder="e.g. john@example.com">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="order-book-select">Select Book *</label>
+              <select id="order-book-select" required onchange="calculateOrderPreview()">
+                <option value="">-- Choose a Book --</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="order-quantity">Quantity *</label>
+              <input type="number" id="order-quantity" value="1" min="1" required oninput="calculateOrderPreview()">
+            </div>
+            <div class="form-group">
+              <label>Estimated Total</label>
+              <div id="order-preview-price" class="preview-box">$0.00</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="order-address">Shipping Address *</label>
+            <textarea id="order-address" rows="2" required placeholder="Delivery street, city, pin code..."></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-success">Submit Order</button>
+            <button type="button" class="btn btn-secondary" onclick="togglePlaceOrderForm()">Cancel</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Orders Filter Bar -->
+      <div class="filter-bar">
+        <input type="text" id="order-search" placeholder="🔍 Search orders by ID, customer name, email..." oninput="handleSearchOrders()">
+        <select id="order-filter-status" onchange="loadOrders()">
+          <option value="All">All Statuses</option>
+          <option value="Pending">Pending</option>
+          <option value="Processing">Processing</option>
+          <option value="Shipped">Shipped</option>
+          <option value="Delivered">Delivered</option>
+          <option value="Cancelled">Cancelled</option>
+        </select>
+      </div>
+
+      <!-- Orders Table -->
+      <div class="table-container">
+        <table class="data-table" id="orders-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer</th>
+              <th>Items</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="orders-list-body">
+            <!-- Dynamically populated by app.js -->
+            <tr><td colspan="6" class="text-center">Loading orders...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- MODALS                                     -->
+  <!-- ========================================== -->
+
+  <!-- Edit Book Modal -->
+  <div id="edit-book-modal" class="modal">
+    <div class="modal-content">
+      <div class="form-header">
+        <h3>Edit Book Details</h3>
+        <button type="button" class="close-btn" onclick="closeEditModal()">&times;</button>
+      </div>
+      <form id="edit-book-form" onsubmit="handleSaveBookEdit(event)">
+        <input type="hidden" id="edit-book-id">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="edit-book-title">Title</label>
+            <input type="text" id="edit-book-title" required>
+          </div>
+          <div class="form-group">
+            <label for="edit-book-author">Author</label>
+            <input type="text" id="edit-book-author" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="edit-book-category">Category</label>
+            <select id="edit-book-category">
+              <option value="Cloud Computing">Cloud Computing</option>
+              <option value="Software Engineering">Software Engineering</option>
+              <option value="Web Development">Web Development</option>
+              <option value="Artificial Intelligence">Artificial Intelligence</option>
+              <option value="Data Science">Data Science</option>
+              <option value="General">General</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="edit-book-price">Price ($)</label>
+            <input type="number" id="edit-book-price" step="0.01" min="0" required>
+          </div>
+          <div class="form-group">
+            <label for="edit-book-stock">Stock Quantity</label>
+            <input type="number" id="edit-book-stock" min="0" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="edit-book-desc">Description</label>
+          <textarea id="edit-book-desc" rows="3"></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Update Book Information</button>
+          <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Book View Details Modal -->
+  <div id="view-book-modal" class="modal">
+    <div class="modal-content">
+      <div class="form-header">
+        <h3 id="view-book-title">Book Details</h3>
+        <button type="button" class="close-btn" onclick="closeViewModal()">&times;</button>
+      </div>
+      <div id="view-book-body" class="book-detail-view">
+        <!-- Injected by app.js -->
+      </div>
+      <div class="form-actions" style="margin-top: 1.5rem;">
+        <button type="button" class="btn btn-secondary" onclick="closeViewModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <p>Cloud Bookstore &copy; 2026 | PaaS Deployment Demo | GitHub: <a href="https://github.com/MohanaPriya-29" target="_blank">MohanaPriya-29</a></p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
