@@ -2,7 +2,7 @@
 
 A full-stack dynamic web application for an online bookstore developed for **Cloud Computing Lab**. Features complete **CRUD operations** for book inventory and **Customer Orders Management**, designed for **PaaS (Platform as a Service)** deployment via **GitHub integration**.
 
-**Developer:** Mohana Priya (`MohanaPriya-29`)  
+**Developer:** Mohana Priya (`MohanaPriya-19`)  
 **Technology Stack:** Node.js, Express.js, Vanilla HTML5, Vanilla CSS3, JavaScript (Fetch API)
 
 ---
@@ -31,7 +31,7 @@ A full-stack dynamic web application for an online bookstore developed for **Clo
 ### **Short Answer: NO (Unless your professor specifically mandates AWS)**
 
 - **When AWS Authentication is NOT required (Recommended):**  
-  Deploying to modern PaaS platforms like **Render**, **Vercel**, or **Railway** connects directly to your **GitHub account (`MohanaPriya-29`)** via GitHub OAuth.
+  Deploying to modern PaaS platforms like **Render**, **Vercel**, or **Railway** connects directly to your **GitHub account (`MohanaPriya-19`)** via GitHub OAuth.
   - ✅ No AWS account needed
   - ✅ No AWS Access Keys / CLI authentication required
   - ✅ 100% Free Tier with automated continuous deployment on `git push`
@@ -70,9 +70,9 @@ Both deployment procedures are detailed below.
 
 ---
 
-### Phase 2: Push to GitHub (`MohanaPriya-29`)
+### Phase 2: Push to GitHub (`MohanaPriya-19`)
 
-1. Open your browser and go to [GitHub](https://github.com) logged in as `MohanaPriya-29`.
+1. Open your browser and go to [GitHub](https://github.com) logged in as `MohanaPriya-19`.
 2. Click the **`+`** icon at top right ➔ **New repository**.
 3. Set:
    - **Repository name:** `cloud-bookstore`
@@ -85,7 +85,7 @@ Both deployment procedures are detailed below.
    git add .
    git commit -m "Initial commit: Online Bookstore CRUD with PaaS deployment readiness"
    git branch -M main
-   git remote add origin https://github.com/MohanaPriya-29/cloud-bookstore.git
+   git remote add origin https://github.com/MohanaPriya-19/cloud-bookstore.git
    git push -u origin main
    ```
 
@@ -96,9 +96,9 @@ Both deployment procedures are detailed below.
 **Render** is the industry standard PaaS for deploying Node.js apps straight from GitHub:
 
 1. Go to [https://render.com](https://render.com) and click **Sign Up** or **Log In**.
-2. Choose **"Continue with GitHub"** and authorize with your GitHub account (`MohanaPriya-29`).
+2. Choose **"Continue with GitHub"** and authorize with your GitHub account (`MohanaPriya-19`).
 3. On the Render Dashboard, click **New +** ➔ **Web Service**.
-4. Select **"Build and deploy from a Git repository"** and connect `MohanaPriya-29/cloud-bookstore`.
+4. Select **"Build and deploy from a Git repository"** and connect `MohanaPriya-19/cloud-bookstore`.
 5. Configure the following fields:
    - **Name:** `cloud-bookstore-mohana` (or any unique name)
    - **Region:** Any close region (e.g., Singapore or Oregon)
@@ -124,7 +124,7 @@ If your lab requires AWS specifically:
 4. Platform: Choose **Node.js** (Platform branch: Node.js 20 or 22).
 5. Application Code:
    - You can either upload a `.zip` of your project files (excluding `node_modules`).
-   - Or use **AWS CodePipeline** to connect to GitHub repository `MohanaPriya-29/cloud-bookstore` for continuous deployment.
+   - Or use **AWS CodePipeline** to connect to GitHub repository `MohanaPriya-19/cloud-bookstore` for continuous deployment.
 6. Click **Create** and wait 3–5 minutes for the environment to provision with an AWS endpoint (e.g., `http://cloudbookstore-env.eba-xxx.elasticbeanstalk.com`).
 
 ---
