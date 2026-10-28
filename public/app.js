@@ -18,19 +18,59 @@ document.addEventListener('DOMContentLoaded', () => {
 function switchTab(tabName) {
   const booksBtn = document.getElementById('tab-books-btn');
   const ordersBtn = document.getElementById('tab-orders-btn');
+  const dbBtn = document.getElementById('tab-db-btn');
+
   const booksSection = document.getElementById('books-section');
   const ordersSection = document.getElementById('orders-section');
+  const dbSection = document.getElementById('database-section');
+
+  // Reset all
+  booksBtn.classList.remove('active');
+  ordersBtn.classList.remove('active');
+  if (dbBtn) dbBtn.classList.remove('active');
+
+  booksSection.classList.remove('active');
+  ordersSection.classList.remove('active');
+  if (dbSection) dbSection.classList.remove('active');
 
   if (tabName === 'books') {
     booksBtn.classList.add('active');
-    ordersBtn.classList.remove('active');
     booksSection.classList.add('active');
-    ordersSection.classList.remove('active');
-  } else {
+  } else if (tabName === 'orders') {
     ordersBtn.classList.add('active');
-    booksBtn.classList.remove('active');
     ordersSection.classList.add('active');
-    booksSection.classList.remove('active');
+  } else if (tabName === 'database') {
+    if (dbBtn) dbBtn.classList.add('active');
+    if (dbSection) dbSection.classList.add('active');
+    loadLiveDatabaseView();
+  }
+}
+
+// --- Live Database Inspector ---
+async function loadLiveDatabaseView() {
+  const jsonPre = document.getElementById('live-db-json');
+  const updatedBadge = document.getElementById('db-last-updated');
+  const countBadge = document.getElementById('db-records-count');
+
+  if (!jsonPre) return;
+
+  try {
+    const res = await fetch(`${API_BASE}/database/raw`);
+    const result = await res.json();
+
+    if (result.success) {
+      jsonPre.innerText = JSON.stringify(result.data, null, 2);
+      if (updatedBadge) {
+        updatedBadge.innerText = `Last Synced: ${new Date(result.timestamp).toLocaleTimeString()}`;
+      }
+      if (countBadge) {
+        countBadge.innerText = `Books: ${result.data.books.length} | Orders: ${result.data.orders.length}`;
+      }
+    } else {
+      jsonPre.innerText = `Error retrieving live database: ${result.message}`;
+    }
+  } catch (err) {
+    jsonPre.innerText = `Failed to fetch live database from server: ${err.message}`;
   }
 }
 
@@ -54,6 +94,7 @@ async function loadStats() {
       document.getElementById('stat-orders').innerText = result.data.totalOrders;
       document.getElementById('stat-revenue').innerText = `$${result.data.totalRevenue.toFixed(2)}`;
       document.getElementById('stat-low-stock').innerText = result.data.lowStockBooks;
+      loadLiveDatabaseView();
     }
   } catch (err) {
     console.error('Error fetching statistics:', err);

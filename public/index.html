@@ -22,6 +22,7 @@
       <div class="header-nav">
         <button id="tab-books-btn" class="nav-btn active" onclick="switchTab('books')">📖 Books Catalog</button>
         <button id="tab-orders-btn" class="nav-btn" onclick="switchTab('orders')">📦 Customer Orders</button>
+        <button id="tab-db-btn" class="nav-btn" onclick="switchTab('database')">🗄️ Live Database</button>
       </div>
     </div>
   </header>
@@ -263,6 +264,33 @@
             <tr><td colspan="6" class="text-center">Loading orders...</td></tr>
           </tbody>
         </table>
+    <!-- ========================================== -->
+    <!-- TAB 3: LIVE DATABASE INSPECTOR            -->
+    <!-- ========================================== -->
+    <section id="database-section" class="tab-content">
+      <div class="section-header">
+        <div>
+          <h2>Live Cloud Database Inspector</h2>
+          <p>Real-time view of data stored on the server. Watch records update automatically when CRUD operations occur.</p>
+        </div>
+        <div class="action-buttons">
+          <button class="btn btn-outline" onclick="loadLiveDatabaseView()">🔄 Refresh Data</button>
+          <a class="btn btn-primary" href="/api/database/raw" target="_blank">🔗 Open API JSON</a>
+        </div>
+      </div>
+
+      <div class="db-meta-bar" style="margin-bottom: 1rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
+        <span class="badge badge-green">Status: Live Connected</span>
+        <span class="badge badge-blue" id="db-last-updated">Last Synced: Just now</span>
+        <span class="badge badge-purple" id="db-records-count">Records: Calculating...</span>
+      </div>
+
+      <div class="form-card" style="background: #0f172a; color: #f8fafc; border-radius: 8px; overflow: hidden; padding: 1.25rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 1px solid #334155; padding-bottom: 0.5rem;">
+          <span style="font-weight: 600; font-family: monospace; color: #38bdf8;">server-store.json (Live Server Memory & Disk)</span>
+          <span style="font-size: 0.8rem; color: #94a3b8;">Auto-syncs on every CRUD action</span>
+        </div>
+        <pre id="live-db-json" style="max-height: 480px; overflow-y: auto; font-family: 'Courier New', Courier, monospace; font-size: 0.85rem; color: #e2e8f0; line-height: 1.4; white-space: pre-wrap; word-break: break-all;">Loading live server database...</pre>
       </div>
     </section>
 

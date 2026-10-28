@@ -202,6 +202,31 @@ app.get('/api/stats', (req, res) => {
   }
 });
 
+// ==========================================
+// 🗄️ LIVE DATABASE INSPECTOR API
+// ==========================================
+app.get('/api/database/raw', (req, res) => {
+  try {
+    const books = db.getAllBooks();
+    const orders = db.getAllOrders();
+    const stats = db.getStats();
+
+    res.json({
+      success: true,
+      timestamp: new Date().toISOString(),
+      engine: 'Persistent Document Store',
+      stats,
+      data: {
+        books,
+        orders
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+
 // Serve frontend index.html for any unmatched route (Express 5 compatible)
 app.use((req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
