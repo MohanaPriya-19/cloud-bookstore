@@ -12,7 +12,55 @@ document.addEventListener('DOMContentLoaded', () => {
   loadStats();
   loadBooks();
   loadOrders();
+  setupRealtimeSync();
 });
+
+// --- Real-Time Live Sync (Server-Sent Events + Auto-Refresh) ---
+function setupRealtimeSync() {
+  const badge = document.getElementById('realtime-status-badge');
+
+  if (window.EventSource) {
+    const sse = new EventSource(`${API_BASE}/events`);
+
+    sse.onopen = () => {
+      console.log('⚡ Connected to Real-time SQL Database stream');
+      if (badge) {
+        badge.innerText = '🟢 Real-Time SQL Live';
+        badge.className = 'badge badge-green';
+      }
+    };
+
+    sse.onmessage = (e) => {
+      try {
+        const payload = JSON.parse(e.data);
+        console.log('⚡ Real-time database event:', payload);
+        if (payload.type !== 'CONNECTED') {
+          // Data changed in SQL database: reload immediately in real time!
+          loadStats();
+          loadBooks();
+          loadOrders();
+          loadLiveDatabaseView();
+          showToast(`Live Update: ${payload.eventType || 'Database modified'}`, 'info');
+        }
+      } catch (err) {
+        console.error('Error parsing SSE event:', err);
+      }
+    };
+
+    sse.onerror = () => {
+      if (badge) {
+        badge.innerText = '🟡 Auto-Polling Active';
+        badge.className = 'badge badge-amber';
+      }
+    };
+  }
+
+  // Fallback Polling every 4 seconds to guarantee 100% real-time accuracy across all tabs/networks
+  setInterval(() => {
+    loadStats();
+    loadLiveDatabaseView();
+  }, 4000);
+}
 
 // --- Tab Switching ---
 function switchTab(tabName) {

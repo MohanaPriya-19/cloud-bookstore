@@ -3,7 +3,7 @@
 A full-stack dynamic web application for an online bookstore developed for **Cloud Computing Lab**. Features complete **CRUD operations** for book inventory and **Customer Orders Management**, designed for **PaaS (Platform as a Service)** deployment via **GitHub integration**.
 
 **Developer:** Mohana Priya (`MohanaPriya-19`)  
-**Technology Stack:** Node.js, Express.js, Vanilla HTML5, Vanilla CSS3, JavaScript (Fetch API)
+**Technology Stack:** Node.js, Express.js, SQLite Relational Database (SQL), Server-Sent Events (SSE Real-Time Sync), HTML5, CSS3, JavaScript
 
 ---
 

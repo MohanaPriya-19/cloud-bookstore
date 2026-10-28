@@ -512,6 +512,7 @@ body {
 
 .toast.toast-success { background: #15803d; }
 .toast.toast-error { background: #b91c1c; }
+.toast.toast-info { background: #2563eb; }
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }

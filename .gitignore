@@ -1,6 +1,9 @@
 node_modules/
 .env
 data/store.json
+data/*.sqlite
+data/*.sqlite-journal
+*.sqlite
 .DS_Store
 Thumbs.db
 npm-debug.log*
